@@ -21,3 +21,6 @@ artifacts/
 *.pkl
 *.joblib
 .envmlflow/mlruns/
+
+logs/
+artifacts/
