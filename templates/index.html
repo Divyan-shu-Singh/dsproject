@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wine Quality Prediction</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 28px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.2);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f5f5f5;
+            border-radius: 5px;
+            display: none;
+            text-align: center;
+        }
+        
+        .result.show {
+            display: block;
+        }
+        
+        .result-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .prediction {
+            font-size: 36px;
+            color: #667eea;
+            font-weight: bold;
+        }
+        
+        .error {
+            color: #e74c3c;
+            padding: 12px;
+            background: #fadbd8;
+            border-radius: 5px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .error.show {
+            display: block;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍷 Wine Quality Prediction</h1>
+        
+        <form id="predictionForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fixedAcidity">Fixed Acidity</label>
+                    <input type="number" id="fixedAcidity" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="volatileAcidity">Volatile Acidity</label>
+                    <input type="number" id="volatileAcidity" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="citricAcid">Citric Acid</label>
+                    <input type="number" id="citricAcid" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="residualSugar">Residual Sugar</label>
+                    <input type="number" id="residualSugar" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="chlorides">Chlorides</label>
+                    <input type="number" id="chlorides" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="freeSulfurDioxide">Free Sulfur Dioxide</label>
+                    <input type="number" id="freeSulfurDioxide" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="totalSulfurDioxide">Total Sulfur Dioxide</label>
+                    <input type="number" id="totalSulfurDioxide" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="density">Density</label>
+                    <input type="number" id="density" step="0.00001" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="pH">pH</label>
+                    <input type="number" id="pH" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="sulphates">Sulphates</label>
+                    <input type="number" id="sulphates" step="0.01" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="alcohol">Alcohol</label>
+                <input type="number" id="alcohol" step="0.01" required>
+            </div>
+            
+            <button type="submit">Predict Quality</button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Making prediction...</p>
+        </div>
+        
+        <div class="result" id="result">
+            <div class="result-label">Predicted Wine Quality:</div>
+            <div class="prediction" id="predictionValue"></div>
+        </div>
+        
+        <div class="error" id="error"></div>
+    </div>
+    
+    <script>
+        const form = document.getElementById('predictionForm');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const error = document.getElementById('error');
+        const predictionValue = document.getElementById('predictionValue');
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Collect form data
+            const data = {
+                fixed_acidity: parseFloat(document.getElementById('fixedAcidity').value),
+                volatile_acidity: parseFloat(document.getElementById('volatileAcidity').value),
+                citric_acid: parseFloat(document.getElementById('citricAcid').value),
+                residual_sugar: parseFloat(document.getElementById('residualSugar').value),
+                chlorides: parseFloat(document.getElementById('chlorides').value),
+                free_sulfur_dioxide: parseFloat(document.getElementById('freeSulfurDioxide').value),
+                total_sulfur_dioxide: parseFloat(document.getElementById('totalSulfurDioxide').value),
+                density: parseFloat(document.getElementById('density').value),
+                pH: parseFloat(document.getElementById('pH').value),
+                sulphates: parseFloat(document.getElementById('sulphates').value),
+                alcohol: parseFloat(document.getElementById('alcohol').value)
+            };
+            
+            // Show loading state
+            loading.classList.add('show');
+            result.classList.remove('show');
+            error.classList.remove('show');
+            
+            try {
+                // Call Flask API
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const responseData = await response.json();
+                
+                if (response.ok) {
+                    // Display prediction result
+                    predictionValue.textContent = responseData.prediction;
+                    result.classList.add('show');
+                    loading.classList.remove('show');
+                } else {
+                    // Display error message
+                    error.textContent = responseData.error || 'An error occurred';
+                    error.classList.add('show');
+                    loading.classList.remove('show');
+                }
+            } catch (err) {
+                error.textContent = 'Failed to connect to the server. Please try again.';
+                error.classList.add('show');
+                loading.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
