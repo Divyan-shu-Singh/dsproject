@@ -1,4 +1,4 @@
-from src.dsproject.config.configuration import ConfiguartionManager
+from src.dsproject.config.configuration import ConfigurationManager
 from src.dsproject.components.data_ingestion import DataIngestion
 from src.dsproject import logger
 
@@ -10,7 +10,7 @@ class DataIngestionTrainingPipeline:
 
     def initiate_data_ingestion(self):
         try:
-            config_manager = ConfiguartionManager()
+            config_manager = ConfigurationManager()
             data_ingestion_config = config_manager.get_data_ingestion_config()
             data_ingestion = DataIngestion(config=data_ingestion_config)
             data_ingestion.download_data()

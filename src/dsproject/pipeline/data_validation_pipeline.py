@@ -1,5 +1,5 @@
-from src.dsproject.config.configuration import ConfiguartionManager
-from src.dsproject.components.data_validation import DataVaidation
+from src.dsproject.config.configuration import ConfigurationManager
+from src.dsproject.components.data_validation import DataValidation
 from src.dsproject import logger
 
 class DataValidationPipeline:
@@ -8,9 +8,9 @@ class DataValidationPipeline:
 
     def initiate_data_validation(self):
         try:
-            config_manager = ConfiguartionManager()
+            config_manager = ConfigurationManager()
             data_validation_config = config_manager.get_data_validation_config()
-            data_validation = DataVaidation(config=data_validation_config)
+            data_validation = DataValidation(config=data_validation_config)
             data_validation.validate_data()
         except Exception as e:
             logger.exception(f"An error occurred: {e}")
